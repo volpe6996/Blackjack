@@ -5,7 +5,7 @@ public class JImageButton extends JButton {
     public JImageButton(String imgUrl, int width, int height) {
         this.setIcon(new ImageIcon(new ImageIcon(imgUrl).getImage().getScaledInstance(width, height, Image.SCALE_SMOOTH)));
         this.setFocusPainted(false);
-        this.setBackground(Color.WHITE);
+        this.setBackground(new Color(180, 167, 190));
         this.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
     }
 

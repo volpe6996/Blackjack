@@ -1,4 +1,6 @@
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.Stack;
 import javax.swing.*;
 
 public class GameView extends JPanel {
@@ -10,17 +12,24 @@ public class GameView extends JPanel {
     JImageButton chip500;
     JImageButton chip50;
     JImageButton chip1000;
+    JButton startGameBtn;
     JButton hitBtn;
     JButton standBtn;
     JButton doubleBtn;
+    JButton resetBetBtn;
     JImageButton settingsBtn;
     JImageButton musicBtn;
     JImageButton statsBtn;
+    JButton addChipsBtn;
     private JLabel croupierHandValue;
     private JLabel playersHandValue;
     private JLabel balance;
     private JLabel currentBet;
+    private JTextArea gameInfo;
     private JLabel table;
+
+    ArrayList<JCard> playerCards;
+    ArrayList<JCard> croupierCards;
 
     private JLabel card1;
     private JLabel card2;
@@ -35,40 +44,126 @@ public class GameView extends JPanel {
         balance.setText("Dostępne żetony: " + chipAmount);
     }
 
+    public void setCroupierHandValue(int handValue) {
+        croupierHandValue.setText("Krupier: " + handValue);
+    }
+
+    public void setPlayersHandValue(int handValue) {
+        playersHandValue.setText("Gracz: " + handValue);
+    }
+
+    public void setGameInfo(String info) {
+        gameInfo.setText(info);
+    }
+
+    public void addCroupierCard(int index, String cardImgUrl){
+        croupierCards.get(index).setImage(cardImgUrl);
+    }
+
+    public void addPlayerCard(int index, String cardImgUrl){
+        playerCards.get(index).setImage(cardImgUrl);
+    }
+
     public GameView() {
         //construct components
-        chip5 = new JImageButton ("img/chip5.png", 100,100);
-        chip10 = new JImageButton ("img/chip10.png", 100,100);
-        chip25 = new JImageButton ("img/chip25.png", 100,100);
-        chip50 = new JImageButton ("img/chip50.png", 100,100);
-        chip100 = new JImageButton ("img/chip100.png", 100,100);
-        chip250 = new JImageButton ("img/chip250.png", 100,100);
-        chip500 = new JImageButton ("img/chip500.png", 100,100);
-        chip1000 = new JImageButton ("img/chip1000.png", 100,100);
+        chip5 = new JImageButton ("img/chip5.png", 80,80);
+        chip10 = new JImageButton ("img/chip10.png", 80,80);
+        chip25 = new JImageButton ("img/chip25.png", 80,80);
+        chip50 = new JImageButton ("img/chip50.png", 80,80);
+        chip100 = new JImageButton ("img/chip100.png", 80,80);
+        chip250 = new JImageButton ("img/chip250.png", 80,80);
+        chip500 = new JImageButton ("img/chip500.png", 80,80);
+        chip1000 = new JImageButton ("img/chip1000.png", 80,80);
 
         settingsBtn = new JImageButton ("img/settings.png", 60, 60);
         musicBtn = new JImageButton ("img/music.png", 60, 60);
         statsBtn = new JImageButton ("img/stats.png", 60, 60);
+        addChipsBtn = new JButton ("Dodaj żetony");
 
+        startGameBtn = new JButton ("START");
         hitBtn = new JButton ("HIT");
         standBtn = new JButton ("STAND");
         doubleBtn = new JButton ("DOUBLE");
+        resetBetBtn = new JButton("KASUJ ZAKŁAD");
 
-        croupierHandValue = new JLabel ("croupier hand");
-        playersHandValue = new JLabel ("players hand");
+        croupierHandValue = new JLabel ();
+        croupierHandValue.setFont(new Font("Arial", Font.BOLD, 30));
+        croupierHandValue.setForeground(Color.YELLOW);
 
-        table = new JLabel(new ImageIcon("img/table.png"));
+        playersHandValue = new JLabel ();
+        playersHandValue.setFont(new Font("Arial", Font.BOLD, 30));
+        playersHandValue.setForeground(Color.YELLOW);
 
-        card1 = new JLabel();
-        card2 = new JLabel();
-        card1.setIcon(new ImageIcon(new ImageIcon("img/cards/karo7.png").getImage().getScaledInstance(140, 200, Image.SCALE_SMOOTH)));
-        card2.setIcon(new ImageIcon(new ImageIcon("img/cards/karo8.png").getImage().getScaledInstance(140, 200, Image.SCALE_SMOOTH)));
+        table = new JLabel(new ImageIcon(new ImageIcon("img/table.png").getImage().getScaledInstance(1090, 556, Image.SCALE_SMOOTH)));
+
+        playerCards = new ArrayList<>();
+        playerCards.add(new JCard(""));
+        playerCards.add(new JCard(""));
+        playerCards.add(new JCard(""));
+        playerCards.add(new JCard(""));
+        playerCards.add(new JCard(""));
+        playerCards.add(new JCard(""));
+
+        croupierCards = new ArrayList<>();
+        croupierCards.add(new JCard(""));
+        croupierCards.add(new JCard(""));
+        croupierCards.add(new JCard(""));
+        croupierCards.add(new JCard(""));
+        croupierCards.add(new JCard(""));
+        croupierCards.add(new JCard(""));
+
+//        playerCards = new ArrayList<>();
+//        playerCards.add(new JCard("img/cards/karo7.png"));
+//        playerCards.add(new JCard("img/cards/karo8.png"));
+//        playerCards.add(new JCard("img/cards/karo9.png"));
+//        playerCards.add(new JCard("img/cards/karo10.png"));
+//        playerCards.add(new JCard("img/cards/asKaro.png"));
+//        playerCards.add(new JCard("img/cards/krolKaro.png"));
+//
+//        croupierCards = new ArrayList<>();
+//        croupierCards.add(new JCard("img/cards/pik7.png"));
+//        croupierCards.add(new JCard("img/cards/pik8.png"));
+//        croupierCards.add(new JCard("img/cards/pik9.png"));
+//        croupierCards.add(new JCard("img/cards/pik10.png"));
+//        croupierCards.add(new JCard("img/cards/asPik.png"));
+//        croupierCards.add(new JCard("img/cards/krolPik.png"));
+
+        var spacing = 35;
+        for (int i = 0; i < playerCards.size(); i++) {
+            add (playerCards.get(i));
+            add (croupierCards.get(i));
+
+            if(i == 0) {
+                croupierCards.get(i).setBounds(spacing, 118, 140, 200);
+                playerCards.get(i).setBounds(spacing, 334, 140, 200);
+            }
+            else{
+                croupierCards.get(i).setBounds((140*i+spacing*i)+spacing, 118, 140, 200);
+                playerCards.get(i).setBounds((140*i+spacing*i)+spacing, 334, 140, 200);
+            }
+        }
 
         balance = new JLabel ("Dostępne żetony", SwingConstants.CENTER);
         balance.setFont(new Font("Arial", Font.BOLD, 20));
 
         currentBet = new JLabel ("Aktualny zakład: 0", SwingConstants.CENTER);
         currentBet.setFont(new Font("Arial", Font.BOLD, 20));
+
+        gameInfo = new JTextArea();
+        gameInfo.setFont(new Font("Arial", Font.BOLD, 16));
+        gameInfo.setMargin(new Insets(0, 5, 0, 5));
+        gameInfo.setForeground(Color.RED);
+        gameInfo.setLineWrap(true);
+        gameInfo.setWrapStyleWord(true);
+        gameInfo.setEditable(false);
+        gameInfo.setOpaque(false);
+        gameInfo.setFocusable(false);
+
+        startGameBtn.setFont(new Font("Arial", Font.BOLD, 30));
+        startGameBtn.setForeground(Color.BLACK);
+        startGameBtn.setBackground(Color.MAGENTA);
+        startGameBtn.setBorder(BorderFactory.createDashedBorder(Color.BLACK, 4, 4));
+        startGameBtn.setFocusPainted(false);
 
         hitBtn.setFont(new Font("Arial", Font.BOLD, 30));
         hitBtn.setForeground(Color.BLACK);
@@ -88,6 +183,18 @@ public class GameView extends JPanel {
         doubleBtn.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
         doubleBtn.setFocusPainted(false);
 
+        resetBetBtn.setFont(new Font("Arial", Font.BOLD, 20));
+        resetBetBtn.setForeground(Color.BLACK);
+        resetBetBtn.setBackground(new Color(180, 167, 190));
+        resetBetBtn.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
+        resetBetBtn.setFocusPainted(false);
+
+        addChipsBtn.setFont(new Font("Arial", Font.BOLD, 14));
+        addChipsBtn.setForeground(Color.BLACK);
+        addChipsBtn.setBackground(new Color(180, 167, 190));
+        addChipsBtn.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
+        addChipsBtn.setFocusPainted(false);
+
         //adjust size and set layout
         setPreferredSize (new Dimension (1344, 756));
         setLayout (null);
@@ -101,48 +208,56 @@ public class GameView extends JPanel {
         add (chip500);
         add (chip50);
         add (chip1000);
+        add (resetBetBtn);
+
+        add (startGameBtn);
         add (hitBtn);
         add (standBtn);
         add (doubleBtn);
+
         add (settingsBtn);
         add (musicBtn);
         add (statsBtn);
-        add (croupierHandValue);
-        add (playersHandValue);
+        add (addChipsBtn);
+
         add (balance);
         add (currentBet);
-        add (card1);
-        add (card2);
+        add (gameInfo);
 
+        add (croupierHandValue);
+        add (playersHandValue);
         add (table);
 
         //set component bounds (only needed by Absolute Positioning)
-        chip5.setBounds (0, 506, 168, 126);
-        chip10.setBounds (166, 506, 168, 126);
-        chip25.setBounds (332, 506, 168, 126);
-        chip50.setBounds (498, 506, 168, 126);
+        chip5.setBounds (0, 556, 136, 101);
+        chip10.setBounds (134, 556, 136, 101);
+        chip25.setBounds (268, 556, 136, 101);
+        chip50.setBounds (402, 556, 136, 101);
 
-        chip100.setBounds (0, 630, 168, 126);
-        chip250.setBounds (166, 630, 168, 126);
-        chip500.setBounds (332, 630, 168, 126);
-        chip1000.setBounds (498, 630, 168, 126);
+        chip100.setBounds (0, 655, 136, 101);
+        chip250.setBounds (134, 655, 136, 101);
+        chip500.setBounds (268, 655, 136, 101);
+        chip1000.setBounds (402, 655, 136, 101);
+        resetBetBtn.setBounds (536, 556, 175, 200);
 
-        hitBtn.setBounds (664, 506, 252, 250);
-        standBtn.setBounds (915, 506, 252, 250);
-        doubleBtn.setBounds (1165, 506, 179, 250);
+        startGameBtn.setBounds(711, 556, 204, 200);
+        hitBtn.setBounds (915, 556, 252, 101);
+        standBtn.setBounds (915, 655, 252, 101);
+        doubleBtn.setBounds (1165, 556, 179, 200);
 
         settingsBtn.setBounds (1090, 0, 86, 126);
         musicBtn.setBounds (1174, 0, 86, 126);
         statsBtn.setBounds (1258, 0, 86, 126);
+        addChipsBtn.setBounds(1090, 206, 256, 30);
 
         balance.setBounds (1090, 126, 252, 80);
-        currentBet.setBounds (1090, 206, 252, 80);
-        croupierHandValue.setBounds (1090, 378, 126, 126);
-        playersHandValue.setBounds (1216, 378, 126, 126);
+        currentBet.setBounds (1090, 236, 252, 80);
+        gameInfo.setBounds (1090, 306, 252, 60);
 
-        card1.setBounds (40, 35, 150, 200);
-        card2.setBounds (40, 270, 150, 200);
-        table.setBounds (0, 0, 1090, 506);
+        croupierHandValue.setBounds (210, 12, 200, 80);
+        playersHandValue.setBounds (735, 12, 200, 80);
+
+        table.setBounds (0, 0, 1090, 556);
     }
 
 

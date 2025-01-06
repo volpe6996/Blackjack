@@ -2,8 +2,9 @@ import javax.swing.*;
 
 public class Main {
     public static void main(String[] args) {
+        var deckOfCards = new Deck();
         var view = new GameView();
-        var model = new GameModel(500);
+        var model = new GameModel(500, deckOfCards);
         var controller = new GameController(view, model);
 
         JFrame frame = new JFrame ("Blackjack");

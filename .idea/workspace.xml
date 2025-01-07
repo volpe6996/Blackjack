@@ -97,7 +97,7 @@
       <option name="presentableId" value="Default" />
       <updated>1735922121455</updated>
       <workItem from="1735922122339" duration="595000" />
-      <workItem from="1735923664397" duration="59338000" />
+      <workItem from="1735923664397" duration="69865000" />
     </task>
     <servers />
   </component>
@@ -105,15 +105,6 @@
     <option name="version" value="3" />
   </component>
   <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/JCard.java</url>
-          <line>9</line>
-          <option name="timeStamp" value="16" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
     <watches-manager>
       <configuration name="Application">
         <watch expression="croupierCards.get(0)" />

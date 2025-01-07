@@ -1,5 +1,7 @@
+import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.concurrent.TimeUnit;
 
 public class GameController {
     private GameView gameView;
@@ -77,11 +79,13 @@ public class GameController {
                     gameView.setGameInfo("Postaw zakład aby rozpocząć!");
                 }
                 else{
-                    var card = gameModel.deck.randomCard();
-                    gameModel.croupierHandValue += card.getFirstValue();
-                    gameView.setCroupierHandValue(gameModel.croupierHandValue);
+                    gameView.startGameBtn.setEnabled(false);
 
-                    gameView.addCroupierCard(gameModel.numberOfCroupiersCards++, card.getImgUrl());
+                    pickCard(0);
+                    pickCard(0);
+                    pickCard(1);
+
+                    gameView.addCroupierCard(gameModel.numberOfCroupiersCards, "img/cards/rewers.png");
                 }
             } else if(source == gameView.hitBtn){
 
@@ -98,6 +102,21 @@ public class GameController {
             }
         }
     };
+
+    // who == 0 -> player, who == 1 -> croupier
+    private void pickCard(int who) {
+        var card = gameModel.deck.randomCard();
+        if(who == 0){
+            gameModel.playerHandValue += card.getFirstValue();
+            gameView.setPlayersHandValue(gameModel.playerHandValue);
+            gameView.addPlayerCard(gameModel.numberOfPlayersCards++, card.getImgUrl());
+        }
+        else if (who == 1) {
+            gameModel.croupierHandValue += card.getFirstValue();
+            gameView.setCroupierHandValue(gameModel.croupierHandValue);
+            gameView.addCroupierCard(gameModel.numberOfCroupiersCards++, card.getImgUrl());
+        }
+    }
 
     private void editBet(int chipValue)
     {

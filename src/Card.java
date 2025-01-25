@@ -2,8 +2,8 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class Card {
-    private Integer firstValue;
-    private Integer secondValue;
+    private int firstValue;
+    private int secondValue;
     private String imgUrl;
 
     public Integer getFirstValue() {
@@ -18,9 +18,10 @@ public class Card {
         return imgUrl;
     }
 
-    public Card(Integer firstValue, Integer secondValue, String imgUrl) {
+    public Card(int firstValue, int secondValue, String imgUrl) {
         this.firstValue = firstValue;
         this.secondValue = secondValue;
         this.imgUrl = imgUrl;
+        Deck.cards.add(this);
     }
 }

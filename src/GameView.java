@@ -64,6 +64,13 @@ public class GameView extends JPanel {
         playerCards.get(index).setImage(cardImgUrl);
     }
 
+    public void clearTable(){
+        for (int i = 0; i < playerCards.size(); i++) {
+            playerCards.get(i).setImage("");
+            croupierCards.get(i).setImage("");
+        }
+    }
+
     public GameView() {
         //construct components
         chip5 = new JImageButton ("img/chip5.png", 80,80);
@@ -103,6 +110,10 @@ public class GameView extends JPanel {
         playerCards.add(new JCard(""));
         playerCards.add(new JCard(""));
         playerCards.add(new JCard(""));
+        playerCards.add(new JCard(""));
+        playerCards.add(new JCard(""));
+        playerCards.add(new JCard(""));
+        playerCards.add(new JCard(""));
 
         croupierCards = new ArrayList<>();
         croupierCards.add(new JCard(""));
@@ -111,22 +122,10 @@ public class GameView extends JPanel {
         croupierCards.add(new JCard(""));
         croupierCards.add(new JCard(""));
         croupierCards.add(new JCard(""));
-
-//        playerCards = new ArrayList<>();
-//        playerCards.add(new JCard("img/cards/karo7.png"));
-//        playerCards.add(new JCard("img/cards/karo8.png"));
-//        playerCards.add(new JCard("img/cards/karo9.png"));
-//        playerCards.add(new JCard("img/cards/karo10.png"));
-//        playerCards.add(new JCard("img/cards/asKaro.png"));
-//        playerCards.add(new JCard("img/cards/krolKaro.png"));
-//
-//        croupierCards = new ArrayList<>();
-//        croupierCards.add(new JCard("img/cards/pik7.png"));
-//        croupierCards.add(new JCard("img/cards/pik8.png"));
-//        croupierCards.add(new JCard("img/cards/pik9.png"));
-//        croupierCards.add(new JCard("img/cards/pik10.png"));
-//        croupierCards.add(new JCard("img/cards/asPik.png"));
-//        croupierCards.add(new JCard("img/cards/krolPik.png"));
+        croupierCards.add(new JCard(""));
+        croupierCards.add(new JCard(""));
+        croupierCards.add(new JCard(""));
+        croupierCards.add(new JCard(""));
 
         var spacing = 35;
         for (int i = 0; i < playerCards.size(); i++) {
@@ -170,18 +169,21 @@ public class GameView extends JPanel {
         hitBtn.setBackground(Color.GREEN);
         hitBtn.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
         hitBtn.setFocusPainted(false);
+        hitBtn.setEnabled(false);
 
         standBtn.setFont(new Font("Arial", Font.BOLD, 30));
         standBtn.setForeground(Color.BLACK);
         standBtn.setBackground(Color.RED);
         standBtn.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
         standBtn.setFocusPainted(false);
+        standBtn.setEnabled(false);
 
         doubleBtn.setFont(new Font("Arial", Font.BOLD, 30));
         doubleBtn.setForeground(Color.BLACK);
         doubleBtn.setBackground(Color.BLUE);
         doubleBtn.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
         doubleBtn.setFocusPainted(false);
+        doubleBtn.setEnabled(false);
 
         resetBetBtn.setFont(new Font("Arial", Font.BOLD, 20));
         resetBetBtn.setForeground(Color.BLACK);
@@ -258,17 +260,5 @@ public class GameView extends JPanel {
         playersHandValue.setBounds (735, 12, 200, 80);
 
         table.setBounds (0, 0, 1090, 556);
-    }
-
-
-    public static void main (String[] args) {
-//        JFrame frame = new JFrame ("Blackjack");
-//        frame.setDefaultCloseOperation (JFrame.EXIT_ON_CLOSE);
-//        frame.setIconImage(new ImageIcon("img/blackjack.png").getImage());
-//        frame.getContentPane().add(new GameView());
-//        frame.pack();
-//        frame.setLocationRelativeTo(null);
-//        frame.setResizable(false);
-//        frame.setVisible (true);
     }
 }

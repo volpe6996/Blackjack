@@ -1,15 +1,36 @@
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
 public class GameController {
     private GameView gameView;
+    private StatsView statsView;
     private GameModel gameModel;
+    private JFrame gameFrame;
+    private JFrame statsFrame;
 
-    public GameController(GameView gameView, GameModel gameModel) {
+    private Stats stats;
+
+    public GameController(GameView gameView, StatsView statsView, GameModel gameModel, JFrame gameFrame, JFrame statsFrame, Stats stats) throws FileNotFoundException {
         this.gameView = gameView;
+        this.statsView = statsView;
         this.gameModel = gameModel;
+        this.gameFrame = gameFrame;
+        this.statsFrame = statsFrame;
+        this.stats = stats;
+
+        System.out.println("nowy obiekt: " + this.stats.getWins());
+
+        try{
+            this.stats = Serializator.deserialize("stats.ser");
+        } catch (Exception e){
+            return;
+        }
+
+        System.out.println("obiekt po deserializacji: " + this.stats.getWins());
+
 
         gameView.setBalance(gameModel.availableChips);
         gameView.setPlayersHandValue(0);
@@ -89,6 +110,8 @@ public class GameController {
                     enableHitStandDoubleButtons();
                     disableChipsStartResetButtons();
 
+                    stats.setTotalBets(gameModel.currentBet);
+
                     pickCard(gameModel.player, 0, gameModel.deck.randomCard());
                     pickCard(gameModel.croupier, 1, gameModel.deck.randomCard());
                     pickCard(gameModel.player, 0, gameModel.deck.randomCard());
@@ -106,6 +129,8 @@ public class GameController {
                 }
             }
             else if(source == gameView.hitBtn){
+                stats.incrementHits();
+
                 pickCard(gameModel.player, 0, gameModel.deck.randomCard());
                 gameView.doubleBtn.setEnabled(false);
                 if(determineWinners()){
@@ -115,6 +140,8 @@ public class GameController {
             }
             else if (source == gameView.standBtn){
                 disableHitStandDoubleButtons();
+
+                stats.incrementStands();
 
                 onStandDoubleButton();
 
@@ -148,49 +175,87 @@ public class GameController {
 
             }
             else if (source == gameView.statsBtn) {
+                Serializator.serialize(stats,"stats.ser");
 
+                statsView.displayStats(stats);
+
+                gameFrame.setVisible(false);
+                statsFrame.setVisible(true);
             }
         }
     };
 
+    // sprawdz warunki zakonczenia gry
     private boolean determineWinners() {
         var isEndGame = false;
 
-        if (gameModel.player.playerHandValue == 21 ||
-                (gameModel.croupier.playerHandValue >= 17 && gameModel.croupier.playerHandValue < gameModel.player.playerHandValue) ||
-                (gameModel.croupier.playerHandValue >= 17 && gameModel.croupier.playerHandValue > gameModel.player.playerHandValue && gameModel.croupier.playerHandValue > 21)) {
+        if (gameModel.player.playerHandValue == 21) {
+            gameView.setGameInfo("BLACKJACK! WYGRAŁEŚ: " + (int)(1.5 * gameModel.currentBet));
+            gameModel.availableChips += (int)(1.5 * gameModel.currentBet);
 
-            gameView.setGameInfo(gameModel.player.playerHandValue == 21
-                    ? "BLACKJACK! WYGRAŁEŚ: " + (int)(1.5 * gameModel.currentBet)
-                    : (gameModel.croupier.playerHandValue > 21
-                    ? "KRUPIER PRZESADZIŁ! WYGRAŁEŚ: " + gameModel.currentBet
-                    : "KRUPIER NIE DAŁ RADY! WYGRAŁEŚ: " + gameModel.currentBet));
+            stats.incrementWins();
+            stats.incrementNumberOfPlayerBlackjacks();
+            stats.addToTotalWinings((int)(1.5 * gameModel.currentBet));
+            stats.setBiggestWin((int)(1.5 * gameModel.currentBet));
+            stats.incrementCurrentWinStreak();
+            stats.resetCurrentLossStreak();
 
-            gameModel.availableChips += gameModel.player.playerHandValue == 21
-                    ? (int)(1.5 * gameModel.currentBet)
-                    : gameModel.currentBet;
-
-            gameView.setBalance(gameModel.availableChips);
             isEndGame = true;
-        }
+        } else if (gameModel.croupier.playerHandValue >= 17 && gameModel.croupier.playerHandValue < gameModel.player.playerHandValue) {
+            gameView.setGameInfo("KRUPIER NIE DAŁ RADY! WYGRAŁEŚ: " + gameModel.currentBet);
+            gameModel.availableChips += gameModel.currentBet;
 
-        if (gameModel.croupier.playerHandValue == 21 ||
-                gameModel.player.playerHandValue > 21 ||
-                (gameModel.croupier.playerHandValue >= 17 && gameModel.croupier.playerHandValue > gameModel.player.playerHandValue && gameModel.croupier.playerHandValue <= 21)) {
+            stats.incrementWins();
+            stats.addToTotalWinings(gameModel.currentBet);
+            stats.setBiggestWin(gameModel.currentBet);
+            stats.incrementCurrentWinStreak();
+            stats.resetCurrentLossStreak();
 
-            gameView.setGameInfo(gameModel.croupier.playerHandValue == 21
-                    ? "BLACKJACK KRUPIERA! PRZEGRAŁEŚ: " + gameModel.currentBet
-                    : (gameModel.player.playerHandValue > 21
-                    ? "PRZESADZIŁEŚ! PRZEGRAŁEŚ: " + gameModel.currentBet
-                    : "KRUPIER WYGRYWA! PRZEGRAŁEŚ: " + gameModel.currentBet));
+            isEndGame = true;
+        } else if (gameModel.croupier.playerHandValue >= 17 && gameModel.croupier.playerHandValue > gameModel.player.playerHandValue && gameModel.croupier.playerHandValue > 21) {
+            gameView.setGameInfo("KRUPIER PRZESADZIŁ! WYGRAŁEŚ: " + gameModel.currentBet);
+            gameModel.availableChips += gameModel.currentBet;
 
-            if (gameModel.availableChips - gameModel.currentBet < 0) {
-                gameModel.availableChips = 0;
-            } else {
-                gameModel.availableChips -= gameModel.currentBet;
-            }
+            stats.incrementWins();
+            stats.addToTotalWinings(gameModel.currentBet);
+            stats.setBiggestWin(gameModel.currentBet);
+            stats.incrementCurrentWinStreak();
+            stats.resetCurrentLossStreak();
 
-            gameView.setBalance(gameModel.availableChips);
+            isEndGame = true;
+        } else if (gameModel.croupier.playerHandValue == 21) {
+            gameView.setGameInfo("BLACKJACK KRUPIERA! PRZEGRAŁEŚ: " + gameModel.currentBet);
+            gameModel.availableChips -= gameModel.currentBet;
+
+            stats.incrementLosses();
+            stats.incrementNumberOfCroupierBlackjacks();
+            stats.addToTotalLoss(gameModel.currentBet);
+            stats.setBiggestLoss(gameModel.currentBet);
+            stats.incrementCurrentLossStreak();
+            stats.resetCurrentWinStreak();
+
+            isEndGame = true;
+        } else if (gameModel.player.playerHandValue > 21) {
+            gameView.setGameInfo("PRZESADZIŁEŚ! PRZEGRAŁEŚ: " + gameModel.currentBet);
+            gameModel.availableChips -= gameModel.currentBet;
+
+            stats.incrementLosses();
+            stats.addToTotalLoss(gameModel.currentBet);
+            stats.setBiggestLoss(gameModel.currentBet);
+            stats.incrementCurrentLossStreak();
+            stats.resetCurrentWinStreak();
+
+            isEndGame = true;
+        } else if (gameModel.croupier.playerHandValue >= 17 && gameModel.croupier.playerHandValue > gameModel.player.playerHandValue && gameModel.croupier.playerHandValue <= 21) {
+            gameView.setGameInfo("KRUPIER WYGRYWA! PRZEGRAŁEŚ: " + gameModel.currentBet);
+            gameModel.availableChips -= gameModel.currentBet;
+
+            stats.incrementLosses();
+            stats.addToTotalLoss(gameModel.currentBet);
+            stats.setBiggestLoss(gameModel.currentBet);
+            stats.incrementCurrentLossStreak();
+            stats.resetCurrentWinStreak();
+
             isEndGame = true;
         }
 
@@ -198,8 +263,21 @@ public class GameController {
                 gameModel.croupier.playerHandValue == gameModel.player.playerHandValue) {
 
             gameView.setGameInfo("LEPSZY REMIS NIŻ W .....");
+
+            stats.incrementDraws();
+
             isEndGame = true;
         }
+
+        if (gameModel.availableChips <= 0) {
+            gameModel.availableChips = 0;
+            gameModel.currentBet = 0;
+            gameView.setCurrentBet(gameModel.currentBet);
+        }
+
+        gameView.setBalance(gameModel.availableChips);
+
+        Serializator.serialize(stats,"stats.ser");
 
         if (isEndGame){
             enableChipsStartResetButtons();

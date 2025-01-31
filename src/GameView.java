@@ -71,6 +71,10 @@ public class GameView extends JPanel {
         }
     }
 
+    public void configureWindow(){
+
+    }
+
     public GameView() {
         //construct components
         chip5 = new JImageButton ("img/chip5.png", 80,80);

@@ -17,8 +17,6 @@ public class GameView extends JPanel {
     JButton standBtn;
     JButton doubleBtn;
     JButton resetBetBtn;
-    JImageButton settingsBtn;
-    JImageButton musicBtn;
     JImageButton statsBtn;
     JButton addChipsBtn;
     private JLabel croupierHandValue;
@@ -71,10 +69,6 @@ public class GameView extends JPanel {
         }
     }
 
-    public void configureWindow(){
-
-    }
-
     public GameView() {
         //construct components
         chip5 = new JImageButton ("img/chip5.png", 80,80);
@@ -86,9 +80,9 @@ public class GameView extends JPanel {
         chip500 = new JImageButton ("img/chip500.png", 80,80);
         chip1000 = new JImageButton ("img/chip1000.png", 80,80);
 
-        settingsBtn = new JImageButton ("img/settings.png", 60, 60);
-        musicBtn = new JImageButton ("img/music.png", 60, 60);
         statsBtn = new JImageButton ("img/stats.png", 60, 60);
+        statsBtn.setBorder(BorderFactory.createLineBorder(Color.BLACK, 3));
+
         addChipsBtn = new JButton ("Dodaj żetony");
 
         startGameBtn = new JButton ("START");
@@ -221,8 +215,6 @@ public class GameView extends JPanel {
         add (standBtn);
         add (doubleBtn);
 
-        add (settingsBtn);
-        add (musicBtn);
         add (statsBtn);
         add (addChipsBtn);
 
@@ -251,9 +243,7 @@ public class GameView extends JPanel {
         standBtn.setBounds (915, 655, 252, 101);
         doubleBtn.setBounds (1165, 556, 179, 200);
 
-        settingsBtn.setBounds (1090, 0, 86, 126);
-        musicBtn.setBounds (1174, 0, 86, 126);
-        statsBtn.setBounds (1258, 0, 86, 126);
+        statsBtn.setBounds (1090, 0, 254, 126);
         addChipsBtn.setBounds(1090, 206, 256, 30);
 
         balance.setBounds (1090, 126, 252, 80);

@@ -7,7 +7,7 @@ public class Main {
         JFrame statsFrame = new JFrame ("Statystyki");
 
         var deckOfCards = new Deck();
-        var stats = new Stats();
+        var stats = Serializator.deserialize("stats.ser");
 
         var gameView = new GameView();
         var statsView = new StatsView();

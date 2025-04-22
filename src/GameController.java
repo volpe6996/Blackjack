@@ -21,17 +21,6 @@ public class GameController {
         this.statsFrame = statsFrame;
         this.stats = stats;
 
-        System.out.println("nowy obiekt: " + this.stats.getWins());
-
-        try{
-            this.stats = Serializator.deserialize("stats.ser");
-        } catch (Exception e){
-            return;
-        }
-
-        System.out.println("obiekt po deserializacji: " + this.stats.getWins());
-
-
         gameView.setBalance(gameModel.availableChips);
         gameView.setPlayersHandValue(0);
         gameView.setCroupierHandValue(0);
@@ -56,8 +45,6 @@ public class GameController {
             gameView.hitBtn.addActionListener(controlsListener);
             gameView.standBtn.addActionListener(controlsListener);
             gameView.doubleBtn.addActionListener(controlsListener);
-            gameView.settingsBtn.addActionListener(controlsListener);
-            gameView.musicBtn.addActionListener(controlsListener);
             gameView.statsBtn.addActionListener(controlsListener);
         }
     }
@@ -167,12 +154,6 @@ public class GameController {
                 determineWinners();
 
                 gameModel.currentBet = gameModel.betBeforeDouble;
-            }
-            else if (source == gameView.settingsBtn) {
-
-            }
-            else if (source == gameView.musicBtn) {
-
             }
             else if (source == gameView.statsBtn) {
                 Serializator.serialize(stats,"stats.ser");
